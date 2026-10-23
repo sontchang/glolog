@@ -1287,7 +1287,7 @@ $('#reClose').onclick=()=>{if(!sharedView)rClose()};
 $('#reCopy').onclick=async()=>copyText(await shareLink());
 
 /* ---------- 공유 ---------- */
-function getBase(){let v='';try{v=localStorage.getItem(KEYB)||''}catch(e){}if(v)return v;return STANDALONE&&/^https?:$/.test(location.protocol)?location.href.split('#')[0]:BASE_DEFAULT}
+function getBase(){let v='';try{v=localStorage.getItem(KEYB)||''}catch(e){}if(v)return v;return STANDALONE&&/^https?:$/.test(location.protocol)?location.origin+location.pathname:BASE_DEFAULT}
 const te=new TextEncoder(),td=new TextDecoder();
 async function pwKey(pw,salt){const base=await crypto.subtle.importKey('raw',te.encode(pw),'PBKDF2',false,['deriveKey']);
   return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
