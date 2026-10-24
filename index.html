@@ -349,6 +349,17 @@ code,kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(
 .viewonly #reader{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .viewonly #rClose,.viewonly #rEdit,.viewonly #reClose,.viewonly #rtClose{display:none!important}
 @media print{.viewonly #reader{display:none!important}}
+.qbtn{position:fixed;z-index:45;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));width:30px;height:30px;border-radius:50%;
+  border:1px solid var(--line);background:var(--panel);color:var(--mute);font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px -4px rgba(0,0,0,.3)}
+.qbtn:hover{color:var(--ink);border-color:var(--mute)}
+.viewonly .qbtn{display:none}
+@media (max-width:900px){.qbtn{bottom:calc(66px + env(safe-area-inset-bottom,0px))}}
+#guide{position:fixed;inset:0;z-index:65;background:rgba(10,12,15,.5);display:flex;align-items:center;justify-content:center;padding:20px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px))}
+#guide .mbox{width:min(600px,100%);user-select:text;-webkit-user-select:text}
+#guide h3{color:var(--ink);font-size:13.5px;margin-top:10px}
+#guide ul{margin:0;padding-left:1.2em;display:grid;gap:4px;font-size:13px;color:var(--mute);line-height:1.6}
+#guide p{margin:0;font-size:13px;color:var(--mute);line-height:1.65}
+#guide a{color:var(--accent)}
 .edmode{display:flex;align-items:center;gap:8px}
 .colrow{display:flex;gap:6px;align-items:center}
 .colrow input[type=color]{width:44px;height:40px;padding:2px;border:1px solid var(--line);border-radius:5px;background:var(--field);flex:none;cursor:pointer}
@@ -475,7 +486,6 @@ textarea.code{font-family:ui-monospace,Menlo,monospace;font-size:12px;height:76p
           <p class="note"><code>//</code> 클릭을 기다리는 숨 · <code>==단어==</code> 강조 · <code>---</code> 한 줄은 새 장면</p>
           <p class="note">문단별 연출에서: <kbd>Enter</kbd> 새 문단 · <kbd>Shift</kbd>+<kbd>Enter</kbd> 줄바꿈 · <kbd>Ctrl</kbd>+<kbd>Enter</kbd> 새 장면</p>
           <p class="note">장면은 작가가 나눈 단위예요. 휴대폰에서는 한 장면이 화면 크기에 맞춰 여러 쪽으로 나뉘고, PC에서는 종이 한 장에 담깁니다.</p>
-          <p class="note">다른 사람의 글·가사·그림 설명문은 허락 없이 옮겨 공유하지 마세요. 예시 글은 저작권이 끝난 한용운의 「님의 침묵」(1926)입니다.</p>
           <p class="note">PC 감상: 클릭·스페이스 다음 · <kbd>←</kbd> 이전 · <kbd>P</kbd> 자동 재생<br>휴대폰 감상: 오른쪽을 누르면 다음 · 왼쪽 가장자리는 이전 · 가운데는 메뉴</p>
         </div>
       </div>
@@ -505,7 +515,7 @@ textarea.code{font-family:ui-monospace,Menlo,monospace;font-size:12px;height:76p
   <div id="rStage" tabindex="-1"><div id="rPage"></div></div>
   <div id="rDark"></div>
   <div class="rhint" id="rHint"></div>
-  <div class="rtop" id="rTop"><button class="rb" id="rtClose">닫기</button><span class="rt" id="rtTitle"></span><button class="rb" id="rtShare">링크</button></div>
+  <div class="rtop" id="rTop"><button class="rb" id="rtClose">닫기</button><span class="rt" id="rtTitle"></span><button class="rb" id="rtQ" aria-label="이용 안내 · 신고">?</button><button class="rb" id="rtShare">링크</button></div>
   <div class="rinfo" id="rInfo" aria-hidden="true"><span id="riScene"></span><span id="riPage"></span></div>
   <div class="rbot" id="rBot">
     <div class="rrow2"><button class="rb" id="rbPrev">‹ 이전 장면</button><span class="rscene" id="rbScene"></span><button class="rb" id="rbNext">다음 장면 ›</button></div>
@@ -532,6 +542,7 @@ textarea.code{font-family:ui-monospace,Menlo,monospace;font-size:12px;height:76p
     <button class="rb" id="rAuto" aria-pressed="false">자동</button>
     <button class="rb" id="rOpt" aria-expanded="false" aria-controls="rSet">보기 설정</button>
     <button class="rb pc-only" id="rFull">전체화면</button>
+    <button class="rb" id="rQ" aria-label="이용 안내 · 신고">?</button>
   </div></div>
   <div class="rover" id="rLock" hidden><p class="cwl">잠긴 로그</p><p class="cwt">받은 비밀번호를 입력하세요.</p><input id="rLockPw" type="password" autocomplete="off" aria-label="비밀번호"><p class="err" id="rLockErr" aria-live="polite"></p><div class="eb"><button id="rLockGo">열기</button></div></div>
   <div class="rover" id="rRec" hidden><p class="cwl">녹화 모드</p><p class="cwt">휴대폰의 화면 녹화를 먼저 켜 주세요.<br>준비되면 화면을 눌러 시작합니다. 끝까지 저절로 재생돼요.</p><div class="eb"><button id="rRecGo">시작</button></div></div>
@@ -574,6 +585,38 @@ textarea.code{font-family:ui-monospace,Menlo,monospace;font-size:12px;height:76p
     <div id="oBody"></div>
     <p class="note" id="oNote"></p>
     <div class="row"><span></span><button class="btn" id="oAll" hidden>모두 저장</button><button class="btn ghost" id="oClose">닫기</button></div>
+  </div>
+</div>
+<button class="qbtn" id="qBtn" aria-label="이용 안내" title="이용 안내 · 신고">?</button>
+<div id="guide" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="gTitle">
+    <h2 id="gTitle">이용 안내</h2>
+    <p>텍스트 스튜디오는 글 로그에 연출을 입혀 감상 링크로 나누는 무료 도구예요. 회원 가입 없이 쓰고, 원고는 각자의 브라우저에 저장됩니다.</p>
+    <h3>올리면 안 되는 글</h3>
+    <ul>
+      <li>다른 사람의 글·가사·번역·그림 설명문을 허락 없이 옮긴 것</li>
+      <li>음란물, 미성년자를 성적으로 다룬 내용, 폭력·위협, 특정인을 괴롭히거나 개인정보를 드러내는 내용</li>
+      <li>그 밖에 법을 어기는 내용</li>
+    </ul>
+    <p>예시 글은 저작권이 끝난 한용운의 「님의 침묵」(1926)입니다.</p>
+    <h3>저작권과 책임</h3>
+    <ul>
+      <li>글과 연출의 권리와 책임은 글을 쓴 사람에게 있어요. 운영자는 내용을 미리 확인하지 않습니다.</li>
+      <li>업로드한 글꼴은 이 기기에만 저장되고, 감상 링크에는 쓰인 글자만 잘라 담깁니다. 웹에 넣어 쓸 수 있는 글꼴인지는 글꼴의 사용 허락을 직접 확인해 주세요.</li>
+      <li>신고가 들어온 링크나 위 기준에 어긋나는 링크는 알림 없이 지울 수 있어요.</li>
+    </ul>
+    <h3>링크와 보관</h3>
+    <ul>
+      <li>짧은 링크의 글은 만든 날부터 1년 동안 보관되고 그 뒤 자동으로 지워져요. 오래 둘 글은 ‘백업 파일’로 따로 저장해 두세요.</li>
+      <li>짧은 링크는 한 사람이 하루에 만들 수 있는 수가 정해져 있어요. 넘으면 긴 링크로 대신 만들어집니다.</li>
+      <li>감상 링크의 복사 방지는 쉽게 복사하지 못하게 하는 수준이에요. 스크린샷은 막을 수 없습니다.</li>
+      <li>잠금 링크의 비밀번호는 저장하지 않아서, 잊으면 누구도 열 수 없어요.</li>
+    </ul>
+    <h3>개인정보</h3>
+    <p>이름·이메일 같은 개인정보를 받지 않아요. 사이트를 호스팅하는 GitHub와 Cloudflare가 서비스 운영을 위해 접속 기록(IP 주소 등)을 보관할 수 있습니다.</p>
+    <h3>신고</h3>
+    <p>문제가 있는 링크를 발견하면 링크 주소를 적어 알려 주세요. 확인 후 지웁니다.</p>
+    <div class="row"><span></span><a class="btn" id="gReport" target="_blank" rel="noopener noreferrer" href="#">신고하기 (GitHub)</a><button class="btn ghost" id="gClose">닫기</button></div>
   </div>
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -696,7 +739,18 @@ function unpack(o){
   return s;
 }
 let saveT;
-function save(){if(sharedView)return;try{localStorage.setItem(KEY,JSON.stringify(pack(S)));const d=new Date();$('#saved').textContent=`저장됨 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}catch(e){$('#saved').textContent='이 브라우저에는 저장되지 않아요'}}
+/* 다른 탭이 같은 원고를 저장하면 이 탭은 저장을 멈추고 묻는다 (오래된 탭이 최신 글을 덮어쓰지 않도록) */
+let otherTab=false;
+function staleBar(){let b=document.getElementById('staleBar');
+  if(!b){b=document.createElement('div');b.id='staleBar';b.className='warn';b.setAttribute('role','alert');
+    b.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;width:min(560px,calc(100% - 32px));box-shadow:0 10px 30px -12px rgba(0,0,0,.4);margin:0';
+    b.innerHTML='<span>다른 탭에서 이 원고가 바뀌었어요. 이 탭은 저장을 멈췄어요.</span><button class="btn sm pri" id="staleLoad">최신 원고 불러오기</button><button class="btn sm" id="staleKeep">이 탭 내용으로 덮어쓰기</button>';
+    document.body.append(b);
+    b.querySelector('#staleLoad').onclick=()=>{otherTab=false;b.hidden=true;const n=load();if(n)applyLoaded(n)};
+    b.querySelector('#staleKeep').onclick=()=>{otherTab=false;b.hidden=true;save()}}
+  b.hidden=false}
+addEventListener('storage',e=>{if(e.key!==KEY||sharedView||e.newValue==null)return;try{if(e.newValue===JSON.stringify(pack(S)))return}catch(_){}otherTab=true;staleBar()});
+function save(){if(sharedView)return;if(otherTab){$('#saved').textContent='다른 탭과 겹쳐 저장을 멈췄어요';return}try{localStorage.setItem(KEY,JSON.stringify(pack(S)));const d=new Date();$('#saved').textContent=`저장됨 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}catch(e){$('#saved').textContent='이 브라우저에는 저장되지 않아요'}}
 function load(){for(const k of [KEY,KEY1]){try{const r=localStorage.getItem(k);if(r)return unpack(JSON.parse(r))}catch(e){}}return null}
 function b64u(u8){let s='';for(let i=0;i<u8.length;i+=8192)s+=String.fromCharCode.apply(null,u8.subarray(i,i+8192));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function unb64u(t){t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';const s=atob(t),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}
@@ -1003,7 +1057,10 @@ function parseWhole(text){
   return res;
 }
 let whT;
-WH.addEventListener('input',()=>{growW();clearTimeout(whT);whT=setTimeout(()=>{S.blocks=parseWhole(WH.value);changed()},350)});
+WH.addEventListener('input',()=>{growW();clearTimeout(whT);whT=setTimeout(()=>{whT=0;S.blocks=parseWhole(WH.value);changed()},350)});
+/* 탭을 닫거나 숨기기 직전, 아직 반영 안 된 입력을 바로 저장 */
+const flushWhole=()=>{if(whT&&edMode==='whole'){clearTimeout(whT);whT=0;S.blocks=parseWhole(WH.value);changed()}};
+addEventListener('pagehide',flushWhole);document.addEventListener('visibilitychange',()=>{if(document.hidden)flushWhole()});
 function setMode(m){edMode=m;try{localStorage.setItem('glolog.edmode',m)}catch(e){}
   $('#mdWhole').setAttribute('aria-pressed',m==='whole');$('#mdBlocks').setAttribute('aria-pressed',m==='blocks');
   $('#wholeWrap').hidden=m!=='whole';$('#blocks').hidden=m!=='blocks';document.querySelectorAll('.blk-only').forEach(b=>b.hidden=m!=='blocks');
@@ -1251,7 +1308,7 @@ RSG.addEventListener('touchend',e=>{if(tx0===null)return;const dx=e.changedTouch
   if(R.scroll)return;
   if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.4){e.preventDefault();if(RD.classList.contains('menu'))setMenu(false);dx<0?nextPage():back()}});
 document.addEventListener('keydown',e=>{
-  if(RD.hidden||!$('#modal').hidden||!$('#omodal').hidden)return;
+  if(RD.hidden||!$('#modal').hidden||!$('#omodal').hidden||!$('#guide').hidden)return;
   if(!$('#rLock').hidden)return;
   const inBar=e.target.closest&&e.target.closest('.rbar,.rset,#rEnd,.rtop,.rbot,.rover');
   if([' ','ArrowRight','ArrowDown','PageDown'].includes(e.key)||(e.key==='Enter'&&!inBar)){if(inBar&&e.key===' ')return;e.preventDefault();advance()}
@@ -1301,10 +1358,10 @@ async function sha(t){const d=await crypto.subtle.digest('SHA-256',te.encode(t))
 async function shortId(tok){
   let map={};try{map=JSON.parse(localStorage.getItem('ts.short')||'{}')}catch(e){}
   const h=window.crypto&&crypto.subtle?await sha(tok):tok.slice(-24);
-  let id=map[h];
+  let e=map[h],id=e&&(typeof e==='string'?e:(Date.now()-e.t<350*864e5?e.id:null));
   if(!id){const r=await fetch(SHORT_API.replace(/\/$/,'')+'/s',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({t:tok})});
     if(!r.ok)throw new Error('short '+r.status);id=(await r.json()).id;if(!/^[A-Za-z0-9]{6,12}$/.test(id))throw new Error('bad id');
-    map[h]=id;const ks=Object.keys(map);if(ks.length>200)delete map[ks[0]];try{localStorage.setItem('ts.short',JSON.stringify(map))}catch(e){}}
+    map[h]={id,t:Date.now()};const ks=Object.keys(map);if(ks.length>200)delete map[ks[0]];try{localStorage.setItem('ts.short',JSON.stringify(map))}catch(e){}}
   return slug()+'_'+id}
 async function shareLink(){if(sharedView)return location.href;const base=getBase().split('#')[0];const {tok}=await buildShareTok();if(SHORT_API){try{return base+'#'+await shortId(tok)}catch(e){}}return base+'#'+tok}
 const isLocked=t=>{t=t.trim();if(t.includes('#'))t=t.split('#').pop();return t.startsWith('v1.e')};
@@ -1343,10 +1400,11 @@ async function makeShare(){
   let {tok,note}=await buildShareTok();if(lock)tok=await lockTok(tok,pw);
   shareTok=tok;const my=tok;
   const long=base?base+'#'+tok:'';let link=long,short=false;
-  if(SHORT_API&&base){try{link=base+'#'+await shortId(tok);short=true}catch(e){link=long}}
+  let limited=false;
+  if(SHORT_API&&base){try{link=base+'#'+await shortId(tok);short=true}catch(e){link=long;limited=/429/.test(e.message)}}
   if(shareTok!==my)return;
   $('#mLink').value=link||'기본 주소를 입력하면 링크가 만들어져요';$('#mLen').textContent=short?'· 짧은 링크':`· ${link.length.toLocaleString()}자`;
-  const w=[];if(SHORT_API&&!short&&base)w.push('짧은 링크를 만들지 못해 전체 링크를 보여 드려요. 잠시 뒤 다시 열어 보세요.');
+  const w=[];if(SHORT_API&&!short&&base)w.push(limited?'오늘 만들 수 있는 짧은 링크 수를 넘어 전체 링크를 보여 드려요. 내일 다시 만들 수 있어요.':'짧은 링크를 만들지 못해 전체 링크를 보여 드려요. 잠시 뒤 다시 열어 보세요.');
   if(!short&&link.length>2000)w.push('링크가 2,000자를 넘어요. 일부 앱에서 잘릴 수 있으니 장면 이미지도 함께 보내세요.');
   if(note)w.push(note);
   if(lock)w.push('비밀번호는 링크와 따로 전해 주세요. 잊으면 열 수 없어요.');
@@ -1430,6 +1488,16 @@ $('#mVid').onclick=async()=>{
   rec.start(500);
 };
 $('#rRecGo').addEventListener('click',()=>{R.rec={state:'manual'}});
+
+/* 이용 안내 */
+const REPORT_URL='https://github.com/sontchang/glolog/issues/new';
+function openGuide(){const g=$('#guide');let q='';if(sharedView){let h=location.hash.slice(1);try{h=decodeURIComponent(h)}catch(e){}q=h.startsWith('v1.')?'(긴 링크)':h}
+  $('#gReport').href=REPORT_URL+'?title='+encodeURIComponent('[신고] '+(q||'링크 주소를 적어 주세요'))+'&body='+encodeURIComponent('신고할 링크: '+(sharedView?location.href.slice(0,300):'')+'\n이유: ');
+  g.hidden=false;$('#gClose').focus()}
+function closeGuide(){$('#guide').hidden=true}
+$('#qBtn').onclick=openGuide;$('#rQ').onclick=openGuide;$('#rtQ').onclick=()=>{setMenu(false);openGuide()};$('#gClose').onclick=closeGuide;
+$('#guide').addEventListener('click',e=>{if(e.target.id==='guide')closeGuide()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#guide').hidden){e.stopImmediatePropagation();closeGuide()}},true);
 
 const KEYT='glolog.theme';
 function setTheme(d){document.documentElement.classList.toggle('ui-dark',d);$('#bTheme').setAttribute('aria-pressed',d);$('#bTheme').title=d?'밝은 화면으로':'어두운 화면으로';try{localStorage.setItem(KEYT,d?'dark':'light')}catch(e){}}
