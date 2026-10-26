@@ -1704,7 +1704,7 @@ function musicUI(){const has=!!S.yt;$('#rMu').hidden=!has;$('#rbMu').hidden=!has
 function muKey(y){return y?y.k+':'+(y.id||y.u):null}
 function muState(playing){$('#muToggle').textContent=playing?'일시정지':'재생';$('#muToggle').setAttribute('aria-label',playing?'음악 일시정지':'음악 재생');
   if(M.k==='au'){$('#muToggle').textContent=playing?'❚❚':'▶';}if(playing)$('#muNote').textContent=''}
-const muFail=msg=>{$('#muNote').textContent=msg};
+const muFail=msg=>{M.loading=false;$('#muNote').textContent=msg};
 const MP={ // 재생기별 공통 동작
   play(){if(!M.player)return;if(M.k==='yt')M.player.playVideo();else if(M.k==='sc')M.player.play();else{const p=M.player.play();p&&p.catch(()=>muFail('▶를 눌러 재생해 주세요.'))}},
   pause(){if(!M.player)return;if(M.k==='yt')M.player.pauseVideo();else M.player.pause()},
@@ -1713,8 +1713,8 @@ const MP={ // 재생기별 공통 동작
 async function musicOpen(){
   musicUI();if(!S.yt||M.off)return;const y=muN(S.yt);
   const card=$('#music');card.dataset.k=y.k;RD.dataset.mk=y.k;card.hidden=false;RD.classList.add('has-music');$('#muVol').value=muVolume();$('#muNote').textContent='';$('#muVolRow').hidden=false;muState(false);relayout();
-  if(M.player&&M.vid===muKey(y))return;
-  musicDestroy(true);M.vid=muKey(y);M.k=y.k;
+  if((M.player||M.loading)&&M.vid===muKey(y))return;
+  musicDestroy(true);M.vid=muKey(y);M.k=y.k;M.loading=true;
   const frame=$('#muFrame');frame.innerHTML='<div id="ytBox"></div>';
   if(y.k==='au'){const a=new Audio();a.preload='none';a.loop=true;a.src=y.u;M.player=a;M.ready=true;
     a.addEventListener('loadedmetadata',()=>{if(y.s&&a.duration>y.s)try{a.currentTime=y.s}catch(e){}},{once:true});
@@ -1740,10 +1740,10 @@ async function musicOpen(){
       onStateChange:e=>muState(e.data===1),
       onError:e=>muFail([101,150].includes(e.data)?'이 영상은 다른 사이트에서 재생할 수 없게 설정돼 있어요.':'영상을 재생하지 못했어요. 링크를 확인해 주세요.')}});
 }
-function musicKick(){if(!S.yt||M.off||R.rec)return;if(M.ready&&M.player){if(!MP.playing()&&!M.userPaused)MP.play()}else{M.want=true;if(!M.player)musicOpen()}
+function musicKick(){if(!S.yt||M.off||R.rec)return;if(M.ready&&M.player){if(!MP.playing()&&!M.userPaused)MP.play()}else{M.want=true;if(!M.player&&!M.loading)musicOpen()}
   clearTimeout(M.hintT);M.hintT=setTimeout(()=>{if(M.ready&&M.player&&!MP.playing()&&!M.userPaused&&!$('#muNote').textContent)$('#muNote').textContent=M.k==='au'?'소리가 안 나면 ▶를 눌러 주세요.':'소리가 안 나면 플레이어의 ▶를 눌러 주세요.'},2500)}
 function musicDestroy(keepUI){clearTimeout(M.hintT);try{if(M.k==='yt')M.player&&M.player.destroy();else if(M.k==='au'&&M.player){M.player.pause();M.player.removeAttribute('src');M.player.load()}}catch(e){}
-  M.player=null;M.ready=false;M.want=false;M.vid=null;M.userPaused=false;M.scPlaying=false;$('#muFrame').innerHTML='<div id="ytBox"></div>';
+  M.player=null;M.ready=false;M.want=false;M.vid=null;M.loading=false;M.userPaused=false;M.scPlaying=false;$('#muFrame').innerHTML='<div id="ytBox"></div>';
   if(!keepUI){$('#music').hidden=true;RD.classList.remove('has-music');delete RD.dataset.mk;relayout()}}
 $('#muToggle').onclick=()=>{if(!M.player||!M.ready){M.want=true;return}if(MP.playing()){MP.pause();M.userPaused=true}else{MP.play();M.userPaused=false}};
 $('#muClose').onclick=()=>{M.off=true;musicDestroy();musicUI();toast('음악을 껐어요. ♪로 다시 켤 수 있어요')};
