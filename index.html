@@ -84,7 +84,13 @@ code,kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(
 .blk{background:var(--field);border:1px solid var(--line);border-radius:6px;padding:8px 10px;display:grid;gap:4px}
 .blk.has-fx{border-color:color-mix(in srgb,var(--lamp) 50%,var(--line))}
 .blk:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 14%,transparent)}
-.blk-top{display:flex;align-items:center;gap:8px;min-height:28px}
+.blk-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start;column-gap:8px;min-height:28px}
+.blk-sel{display:flex;align-items:center;gap:6px;min-width:0}
+.blk-sel .gsel{flex:0 1 118px;min-width:0}
+.blk-sel .fxsel{flex:1 1 170px;min-width:0;max-width:240px}
+@media (max-width:480px){.blk .tools .ib{min-width:30px;padding:4px 5px}}
+.blk-run{display:flex;align-items:center;gap:6px}
+.blk-no{line-height:30px}
 .blk-no{font-family:var(--latin);font-size:16px;color:var(--mute);font-variant-numeric:tabular-nums}
 .fxtag{font-size:12px;display:none;align-items:center;gap:6px}
 .has-fx .fxtag{display:inline-flex}
@@ -117,7 +123,6 @@ code,kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(
 .gchips button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .demo-mood{font-size:12.5px;color:var(--mute);min-height:1.4em;margin:0}
 .blk:not(.has-fx) .fxsel{color:var(--mute)}
-.blk-top{flex-wrap:wrap}
 .adders{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .keys{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:12.5px;align-items:baseline}
 .keys dd{margin:0;color:var(--mute)}
@@ -186,6 +191,11 @@ code,kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(
 .page.pflash::before{animation:kPflash .5s ease-out}
 .page.pcut::before{animation:kPcut .34s steps(1,end)}
 .page.pshake{animation:kPshake .5s cubic-bezier(.36,.07,.19,.97)}
+.page.jolt{animation:kPshake .42s cubic-bezier(.36,.07,.19,.97)}
+.page.jolt::after{background:radial-gradient(ellipse 78% 70% at 50% 50%,transparent 45%,rgba(0,0,0,.55) 100%);animation:kJolt .5s ease-out}
+@keyframes kJolt{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
+.fxr .page.jolt,.fxr .page.jolt::after{animation:none!important}
+@media (prefers-reduced-motion:reduce){.page.jolt,.page.jolt::after{animation:none!important}}
 .page.gaze .para:not(.lit){opacity:.1}
 .page.gaze::after{opacity:1;background:radial-gradient(ellipse 80% 70% at 50% 50%,transparent 45%,color-mix(in srgb,var(--rose) 28%,transparent) 100%)}
 .page.tunnel .para:not(.lit){opacity:.28;filter:blur(2px);transition:opacity 1s,filter 1s}
@@ -842,7 +852,7 @@ const SPEC={
  'hor.mutter':{n:'중얼거림',m:'떨리는 목소리',t:'seq',sp:700,a:3200,kf:'gMutter'},
  'hor.blood':{n:'핏빛',m:'경고 · 피',t:'seq',sp:1100,a:1500,kf:'gBlood'},
  'hor.glitch':{n:'깨진 글자',m:'정신적 파열',t:'rand',sp:250,a:1000,kf:'gGlitch',js:'glitch'},
- 'hor.jump':{n:'갑툭튀',m:'점프 스케어',t:'flat',a:120,kf:'kSeep',delay:260,para:'pSlam',pd:520,page:'flash'},
+ 'hor.jump':{n:'갑툭튀',m:'점프 스케어',t:'flat',a:120,kf:'kSeep',delay:260,para:'pSlam',pd:520,page:'jolt'},
  'hor.faint':{n:'희미한 목소리',m:'누군가 있다',t:'rand',sp:1500,a:1900,kf:'gGhost'},
  'com.bounce':{n:'통통',m:'신난 대사',t:'seq',sp:700,a:1000,kf:'gSquash'},
  'com.pop':{n:'뿅',m:'등장 · 깜짝',t:'rand',sp:220,a:520,kf:'gPop'},
@@ -1144,7 +1154,7 @@ function playSeg(seg,fx,sp,ctx){
 
 /* 장르 연출의 문단·지면 움직임 */
 const PAGE_KEEP=['spot','gaze','dim','tunnel','chill','aged','faded'];
-function clearPageFx(page){if(!page)return;page.classList.remove(...PAGE_KEEP);page.querySelectorAll('.lit,.zoomed').forEach(x=>x.classList.remove('lit','zoomed'))}
+function clearPageFx(page){if(!page)return;page.classList.remove(...PAGE_KEEP,'jolt','pflash','pshake','pcut','flick','heart');page.querySelectorAll('.lit,.zoomed').forEach(x=>x.classList.remove('lit','zoomed'))}
 function genreExtras(seg,fx,G,k,ctx){
   const para=seg.closest('.para'),page=ctx.page,D=(G.delay||0)*k;
   if(G.para&&para){para.classList.remove('pa');para.dataset.pa=G.para;para.style.setProperty('--pd',G.pd*k+'ms');
@@ -1153,6 +1163,7 @@ function genreExtras(seg,fx,G,k,ctx){
   if(G.page&&page){const pg=G.page;
     if(pg==='gaze'||pg==='tunnel'){page.classList.add(pg);para&&para.classList.add('lit')}
     else if(['dim','chill','aged','faded'].includes(pg))page.classList.add(pg);
+    else if(pg==='jolt'){ctx.timers.push(setTimeout(()=>{page.classList.remove('jolt');void page.offsetWidth;page.classList.add('jolt');ctx.timers.push(setTimeout(()=>page.classList.remove('jolt'),560))},D))}
     else if(pg==='pause'){page.classList.add('pause');ctx.timers.push(setTimeout(()=>page.classList.remove('pause'),D+60))}
     else{const cls={flash:'pflash',shake:'pshake',cut:'pcut',flick:'flick',heart:'heart'}[pg];page.classList.remove(cls);void page.offsetWidth;page.classList.add(cls);ctx.timers.push(setTimeout(()=>page.classList.remove(cls),pg==='flick'?1600:pg==='heart'?1900:600))}}
   if(G.js==='glitch')glitchSwap(seg,ctx,750*k);
@@ -1215,10 +1226,11 @@ function renderBlocks(focusId){
       w.append(d,lab(page));return}
     pn++;const d=document.createElement('div');d.className='blk'+(b.fx!=='none'?' has-fx':'');d.dataset.i=i;
     d.innerHTML=`<div class="blk-top"><span class="blk-no">¶ ${pn}</span>
-        <select class="gsel" id="g${b.id}" data-g="1" aria-label="문단 ${pn} 장르">${opt(GENRES,genreOf(b))}</select>
+        <div class="blk-sel"><select class="gsel" id="g${b.id}" data-g="1" aria-label="문단 ${pn} 장르">${opt(GENRES,genreOf(b))}</select>
         <select class="fxsel" id="fx${b.id}" data-k="fx" aria-label="문단 ${pn} 연출">${fxOpts(genreOf(b),b.fx)}</select>
-        <span class="seg2 fxonly" role="group" aria-label="시작"><button data-tr="auto" aria-pressed="${b.tr!=='step'}" title="앞 문단에 이어 저절로">이어서</button><button data-tr="step" aria-pressed="${b.tr==='step'}" title="독자가 누를 때까지 기다림">클릭 후</button></span>
-        <span class="tools"><button class="ib fxonly" data-a="play" title="미리보기에서 재생">재생</button><button class="ib" data-a="more" aria-expanded="${openMore.has(b.id)}" aria-label="세부 설정" title="빠르기 · 정렬 · 숨 · 강조">⋯</button><button class="ib" data-a="up" aria-label="위로">↑</button><button class="ib" data-a="down" aria-label="아래로">↓</button><button class="ib" data-a="del" aria-label="삭제" title="삭제">✕</button></span></div>
+        </div>
+        <span class="tools"><button class="ib" data-a="more" aria-expanded="${openMore.has(b.id)}" aria-label="세부 설정" title="빠르기 · 정렬 · 숨 · 강조">⋯</button><button class="ib" data-a="up" aria-label="위로">↑</button><button class="ib" data-a="down" aria-label="아래로">↓</button><button class="ib" data-a="del" aria-label="삭제" title="삭제">✕</button></span></div>
+      <div class="blk-run fxonly"><span class="seg2" role="group" aria-label="시작"><button data-tr="auto" aria-pressed="${b.tr!=='step'}" title="앞 문단에 이어 저절로">이어서</button><button data-tr="step" aria-pressed="${b.tr==='step'}" title="독자가 누를 때까지 기다림">클릭 후</button></span><button class="ib" data-a="play" title="미리보기에서 재생">▶ 재생</button></div>
       <textarea id="t${b.id}" rows="1" aria-label="문단 ${pn}" placeholder="문단을 쓰거나 긴 글을 붙여넣으세요"></textarea>
       <div class="opts more"${openMore.has(b.id)?'':' hidden'}>
         <label class="sel"><span>빠르기</span><select id="sp${b.id}" data-k="sp">${opt({s:'느리게',n:'보통',f:'빠르게'},b.sp)}</select></label>
@@ -1429,7 +1441,7 @@ renderDemo();
 $('#gChips').addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;demoG=b.dataset.g;renderDemo();$('#demoMood').textContent=''});
 let demoTimers=[];
 $('#fxCards').addEventListener('click',e=>{const b=e.target.closest('[data-demo]');if(!b)return;const fx=b.dataset.demo;
-  const page=$('#demo');clearPageFx(page);page.classList.remove('pause','pflash','pshake','pcut');applyType(page);paintHl(page);demoTimers.forEach(clearTimeout);demoTimers=[];
+  const page=$('#demo');clearPageFx(page);page.classList.remove('pause','pflash','pshake','pcut','jolt');applyType(page);paintHl(page);demoTimers.forEach(clearTimeout);demoTimers=[];
   $('#demoMood').textContent=`${FX[fx].n} — ${FX[fx].m}`;
   const para=page.querySelector('.para');para.classList.remove('lit','pa');para.querySelector('.tx').innerHTML=`<span class="seg" data-fx="${fxCls(fx)}">${fmt(DEMO)}</span>`;
   page.scrollIntoView({block:'nearest',behavior:'smooth'});const seg=para.querySelector('.seg');if(fx!=='erase')seg.classList.add('wait');
