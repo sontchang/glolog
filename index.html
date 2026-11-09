@@ -162,7 +162,7 @@ code,kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(
 .page[data-paper="fog"]{--pg:#e3e6e9;--pg-ink:#262b31;--pg-mute:#4c535b;--glow:rgba(170,200,255,.6);--glow-ink:#234a7a;--hl:#2d4f78;--dawn:rgba(190,215,255,.5)}
 .page[data-paper="night"]{--pg:#15171d;--pg-ink:#d9d2c6;--pg-mute:#a39d92;--glow:rgba(255,196,118,.5);--glow-ink:#ffe0ad;--hl:#f3c37f;--blend:screen;--vig:rgba(0,0,0,.6);--grain-o:.07;--dawn:rgba(160,190,255,.18);--lampmark:#f0b25e}
 .page[data-paper="ink"]{--pg:#0b0b0c;--pg-ink:#cbc5ba;--pg-mute:#938d84;--glow:rgba(255,120,110,.42);--glow-ink:#ffc8bf;--hl:#e0726a;--blend:screen;--vig:rgba(0,0,0,.7);--grain-o:.08;--dawn:rgba(255,150,140,.14);--lampmark:#e0726a}
-.pg-head{padding:12.5cqw 8cqw 0;position:relative;z-index:1}
+.pg-head{padding:12.5cqw 9.5cqw 0;position:relative;z-index:1}
 .pg-img{position:absolute;inset:0;z-index:0;background-repeat:no-repeat;background-position:50% 50%;pointer-events:none}
 .pg-veil{position:absolute;inset:0;background:var(--pg);opacity:0;font-style:normal}
 .ilist{display:flex;flex-wrap:wrap;gap:8px}
@@ -181,12 +181,12 @@ code,kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(
 #iEdit .seg2 button{min-height:30px}
 .pg-title{font-family:var(--tf);font-style:var(--tfs,normal);font-weight:400;font-size:calc(10.5cqw * var(--ts,1));line-height:1.08;margin:0;overflow-wrap:anywhere}
 .pg-sub{font-family:var(--latin),var(--bf);font-size:max(13px,2.45cqw);margin:3.2cqw 0 0 3.2cqw;color:var(--pg-mute)}
-.pg-body{position:relative;z-index:1;flex:1;padding:8cqw 7.5cqw 5cqw 17.5cqw;font-family:var(--bf);
+.pg-body{position:relative;z-index:1;flex:1;padding:8cqw 9.5cqw 5cqw 9.5cqw;font-family:var(--bf);
   font-size:calc(clamp(14px,2.25cqw,19px) * var(--fsz,1) * var(--fsc,1) * var(--rz,1));line-height:var(--lh,2.05);letter-spacing:var(--ls,0);
   text-align:var(--ta,justify);word-break:break-all;display:flex;flex-direction:column}
 .page:not(.first) .pg-body{padding-top:13cqw}
-.pg-num{position:relative;z-index:1;padding:0 7.5cqw 5.5cqw;text-align:right;font-family:var(--latin);font-size:max(12px,2.1cqw);color:var(--pg-mute);font-variant-numeric:tabular-nums}
-@container (max-width:520px){.pg-body{padding-left:11cqw;padding-right:8cqw}}
+.pg-num{position:relative;z-index:1;padding:0 9.5cqw 5.5cqw;text-align:right;font-family:var(--latin);font-size:max(12px,2.1cqw);color:var(--pg-mute);font-variant-numeric:tabular-nums}
+@container (max-width:520px){.pg-body,.pg-head{padding-left:8cqw;padding-right:8cqw}}
 .para{position:relative;transition:opacity .9s ease}
 .tx{display:block;text-indent:1.45em}
 .al-c .tx{text-align:center;text-indent:0}
@@ -447,9 +447,10 @@ code,kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(
 .page.flow.scroll .pg-view{overflow-y:auto;overscroll-behavior:contain}
 .page.flow.scroll .pg-cols{height:auto;columns:auto;padding-bottom:48px}
 .page.flow .pg-head{padding:13vh 0 6vh}
+.page.flow.wb-keep .pg-body{word-break:keep-all}
 .page.flow .pg-title{font-size:calc(46px * var(--ts,1));text-wrap:balance;word-break:keep-all}
 .page.flow .pg-sub{font-size:14px;margin:12px 0 0 3px}
-.page.flow .pg-body{display:block;padding:0;font-size:calc(17px * var(--fsc,1) * var(--fsz,1) * var(--rz,1));line-height:var(--rlh,1.8);text-align:var(--rta,left);word-break:keep-all;overflow-wrap:break-word;text-wrap:pretty;orphans:2;widows:2}
+.page.flow .pg-body{display:block;padding:0;font-size:calc(17px * var(--fsc,1) * var(--fsz,1) * var(--rz,1));line-height:var(--rlh,1.8);text-align:var(--rta,justify);word-break:normal;line-break:strict;overflow-wrap:break-word;text-wrap:pretty;orphans:2;widows:2}
 .page.flow:not(.first) .pg-body{padding-top:2vh}
 .page.flow .pg-num{display:none}
 .endmark{height:1px}
@@ -568,7 +569,19 @@ code,kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(
 #reader.has-music .rhint{display:none}
 .ytstat{margin:0;font-size:12.5px;color:var(--mute)}
 .ytstat.bad{color:var(--accent)}
-.edmode{display:flex;align-items:center;gap:8px}
+.edmode{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#hideEmpty[aria-pressed="true"]{background:var(--soft);border-color:var(--ink)}
+#hideEmpty b{font-weight:500;color:var(--mute)}
+.bulk{border:1px solid var(--line);border-radius:8px;background:var(--soft);padding:10px;display:grid;gap:8px;margin:8px 0}
+.bulk-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.bulk .bl{font-size:12.5px;color:var(--mute);min-width:3em}
+.bulk select{font-size:13px;min-height:32px;padding:3px 6px;background:var(--field);border:1px solid var(--line);border-radius:4px;max-width:100%}
+.bulk .seg2 button{min-height:32px}
+.bulk .note:empty{display:none}
+.blk-chk{display:none;width:18px;height:18px;margin:0 6px 0 0;vertical-align:-3px;accent-color:var(--accent);cursor:pointer}
+#blocks.picking .blk-chk{display:inline-block}
+#blocks.picking .blk.sel{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%,transparent)}
+#blocks.hide-empty .blk.is-empty:not(:focus-within):not(.keep){display:none}
 .colrow{display:flex;gap:6px;align-items:center}
 .colrow input[type=color]{width:44px;height:40px;padding:2px;border:1px solid var(--line);border-radius:5px;background:var(--field);flex:none;cursor:pointer}
 .colrow input[type=text]{flex:1;min-width:0;min-height:40px;padding:8px 10px;border:1px solid var(--line);border-radius:5px;background:var(--field);font-family:ui-monospace,Menlo,monospace;text-transform:uppercase}
@@ -637,7 +650,17 @@ textarea.code{font-family:ui-monospace,Menlo,monospace;font-size:12px;height:76p
           <label class="field"><span>제목</span><input id="sTitle" type="text" autocomplete="off"></label>
           <label class="field"><span>부제</span><input id="sSub" type="text" autocomplete="off"></label>
         </div>
-        <div class="edmode"><span class="seg2" role="group" aria-label="원고 보기"><button id="mdWhole" aria-pressed="true">통으로 쓰기</button><button id="mdBlocks" aria-pressed="false">문단별 연출</button></span></div>
+        <div class="edmode"><span class="seg2" role="group" aria-label="원고 보기"><button id="mdWhole" aria-pressed="true">통으로 쓰기</button><button id="mdBlocks" aria-pressed="false">문단별 연출</button></span>
+          <span style="flex:1"></span>
+          <button class="btn sm ghost blk-only" id="hideEmpty" aria-pressed="true" title="빈 줄 문단 칸을 목록에서 숨깁니다. 지면의 빈 줄 여백은 그대로예요">빈 줄 칸 숨기기 <b id="emptyN"></b></button>
+          <button class="btn sm" id="bulkBtn" aria-expanded="false" aria-controls="bulk">연출 한꺼번에</button></div>
+        <div class="bulk" id="bulk" hidden>
+          <div class="bulk-row"><span class="bl">대상</span><span class="seg2" role="group" aria-label="연출을 줄 문단"><button data-t="all" aria-pressed="true">전체 문단</button><button data-t="scene" aria-pressed="false" id="bkScene">이 장면</button><button data-t="sel" aria-pressed="false">고른 문단 <b id="selN">0</b></button></span></div>
+          <div class="bulk-row"><span class="bl">연출</span><select id="bkG" aria-label="장르"></select><select id="bkFx" aria-label="연출"></select></div>
+          <div class="bulk-row"><span class="bl">시작</span><select id="bkTr" aria-label="시작"><option value="">그대로</option><option value="auto">이어서</option><option value="step">클릭 후</option></select><span class="bl">빠르기</span><select id="bkSp" aria-label="빠르기"><option value="">그대로</option><option value="s">느리게</option><option value="n">보통</option><option value="f">빠르게</option></select></div>
+          <div class="bulk-row"><button class="btn sm" id="bkApply">적용</button><span class="bk-pick"><button class="btn ghost sm" id="bkAll">모두 고르기</button><button class="btn ghost sm" id="bkNone">고르기 해제</button></span><span style="flex:1"></span><button class="btn ghost sm" id="bkClose">닫기</button></div>
+          <p class="note" id="bkNote"></p>
+        </div>
         <div id="wholeWrap">
           <textarea id="whole" aria-label="원고 전체" spellcheck="false" placeholder="글을 쓰거나 붙여넣으세요. 빈 줄로 문단을 나눕니다."></textarea>
           <p class="note" style="margin-top:6px">빈 줄 = 새 문단 · <code>---</code> 한 줄 = 새 장면 · <code>~</code> 한 줄 = 빈 줄 여백. 연출은 ‘문단별 연출’에서 골라요.</p>
@@ -761,7 +784,7 @@ textarea.code{font-family:ui-monospace,Menlo,monospace;font-size:12px;height:76p
     <div class="rrow">글꼴<div class="rchips" id="rsFont"><button data-v="auto">작가 설정</button><button data-v="nanum">명조</button><button data-v="sans">고딕</button></div></div>
     <label>글자 크기 <input type="range" id="rsSize" min="80" max="140" step="5"></label>
     <div class="rrow">줄 간격<div class="rchips" id="rsLh"><button data-v="auto">작가 설정</button><button data-v="1.6">좁게</button><button data-v="1.8">보통</button><button data-v="2.05">넓게</button></div></div>
-    <div class="rrow m-only">정렬<div class="rchips" id="rsAl"><button data-v="left">왼쪽</button><button data-v="justify">양쪽</button></div></div>
+    <div class="rrow m-only">정렬<div class="rchips" id="rsAl"><button data-v="justify">양쪽 맞춤</button><button data-v="left">왼쪽 · 단어 안 끊김</button></div></div>
     <div class="rrow m-only">넘기기<div class="rchips" id="rsView"><button data-v="page">쪽 넘김</button><button data-v="scroll">스크롤</button></div></div>
     <div class="rrow m-only">터치<div class="rchips" id="rsHand"><button data-v="r">오른손 (오른쪽 = 다음)</button><button data-v="l">왼손 (왼쪽 = 다음)</button></div></div>
     <div class="rrow">연출<div class="rchips" id="rsFx"><button data-v="full">풍부하게</button><button data-v="calm">차분하게</button><button data-v="off">끄기</button></div></div>
@@ -1151,7 +1174,7 @@ function paintImg(page,id){let L=page.querySelector(':scope>.pg-img');const m=id
 /* ---------- 연출 엔진 ---------- */
 function splitChars(root){
   if(root.dataset.split)return;root.dataset.split='1';
-  const keep=!!root.closest('.flow')||(root.isConnected&&getComputedStyle(root).wordBreak==='keep-all');
+  const keep=!!root.closest('.wb-keep')||(!root.closest('.flow')&&root.isConnected&&getComputedStyle(root).wordBreak==='keep-all');
   const walk=node=>{[...node.childNodes].forEach(ch=>{
     if(ch.nodeType===3){const f=document.createDocumentFragment();let w=null;const inRd=!!(ch.parentNode&&ch.parentNode.closest&&ch.parentNode.closest('.rd'));
       for(const t of ch.textContent){if(/\s/.test(t)){w=null;if(inRd){const sp=document.createElement('span');sp.className='sp';sp.textContent=t;f.append(sp)}else f.append(t);continue}
@@ -1335,8 +1358,8 @@ function renderBlocks(focusId){
         <select id="bs${b.id}" data-k="sc" aria-label="이 장면의 분위기"><option value="">분위기: 앞 장면과 같게</option>${opt(SCENES,b.sc,(k,v)=>k==='none'?'분위기 없음':v)}</select>`:'<span class="brk-l" style="margin:0">배경은 모든 장면 공통</span>'}${S.ib==='scene'&&S.imgs&&S.imgs.length?`<select id="bb${b.id}" data-k="bi" aria-label="이 장면의 배경 이미지">${imgOpts(b.bi,true)}</select>`:''}
         <span class="tools"><button class="ib" data-a="up" aria-label="위로">↑</button><button class="ib" data-a="down" aria-label="아래로">↓</button><button class="ib" data-a="del" aria-label="삭제" title="삭제">✕</button></span>`;
       w.append(d,lab(page));return}
-    pn++;const d=document.createElement('div');d.className='blk'+(b.fx!=='none'?' has-fx':'');d.dataset.i=i;d.dataset.g=genreOf(b);
-    d.innerHTML=`<div class="blk-top"><span class="blk-no">¶ ${pn}</span>
+    const emp=!b.x.trim();if(!(hideEmpty&&emp))pn++;const d=document.createElement('div');d.className='blk'+(b.fx!=='none'?' has-fx':'')+(b.x.trim()?'':' is-empty')+(BK.sel.has(b.id)?' sel':'')+(b.id===keepId?' keep':'');d.dataset.i=i;d.dataset.g=genreOf(b);
+    d.innerHTML=`<div class="blk-top"><span class="blk-no"><input type="checkbox" class="blk-chk" aria-label="문단 ${pn} 고르기"${BK.sel.has(b.id)?' checked':''}>¶ ${hideEmpty&&emp?'·':pn}</span>
         <div class="blk-sel"><select class="gsel" id="g${b.id}" data-g="1" aria-label="문단 ${pn} 장르">${opt(GENRES,genreOf(b))}</select>
         <select class="fxsel" id="fx${b.id}" data-k="fx" aria-label="문단 ${pn} 연출">${fxOpts(genreOf(b),b.fx)}</select>
         </div>
@@ -1353,6 +1376,7 @@ function renderBlocks(focusId){
     const ta=d.querySelector('textarea');ta.value=b.x;w.append(d);grow(ta);refreshTag(i,d);
   });
   if(focusId){const t=document.getElementById('t'+focusId);if(t){t.focus({preventScroll:false});}}
+  w.classList.toggle('hide-empty',hideEmpty);w.classList.toggle('picking',!$('#bulk').hidden);updEmpty();updSel()
 }
 function grow(ta){ta.style.height='auto';ta.style.height=ta.scrollHeight+'px'}
 function refreshTag(i,d){const b=S.blocks[i];d=d||$('#blocks').querySelector(`[data-i="${i}"]`);if(!d||b.t!=='p')return;d.classList.toggle('has-fx',b.fx!=='none');
@@ -1361,16 +1385,44 @@ function refreshTag(i,d){const b=S.blocks[i];d=d||$('#blocks').querySelector(`[d
 let pvRaf=0;
 function changed(structural){save();structural?snap():snapSoon();cancelAnimationFrame(pvRaf);pvRaf=requestAnimationFrame(renderPreview)}
 const idxOf=el=>{const r=el.closest('[data-i]');return r?+r.dataset.i:-1};
-function focusBlock(id,pos){requestAnimationFrame(()=>{const t=document.getElementById('t'+id);if(!t)return;t.focus();const p=pos==null?t.value.length:pos;t.setSelectionRange(p,p)})}
+function focusBlock(id,pos){keepId=id;document.querySelectorAll('#blocks .blk.keep').forEach(x=>x.classList.remove('keep'));const c0=document.getElementById('t'+id);c0&&c0.closest('.blk').classList.add('keep');requestAnimationFrame(()=>{const t=document.getElementById('t'+id);if(!t)return;t.focus();const p=pos==null?t.value.length:pos;t.setSelectionRange(p,p)})}
 
+/* 빈 줄 칸 숨기기 · 연출 한꺼번에 */
+let hideEmpty=true;try{hideEmpty=localStorage.getItem('glolog.hideempty')!=='0'}catch(e){}
+let keepId=null;
+const BK={sel:new Set(),t:'all',last:null};
+function updEmpty(){const n=(S.blocks||[]).filter(b=>b.t==='p'&&!b.x.trim()).length;$('#hideEmpty').setAttribute('aria-pressed',hideEmpty);$('#emptyN').textContent=n?`(${n})`:'';$('#hideEmpty').hidden=edMode!=='blocks'||(!n&&!hideEmpty);if(!n)$('#hideEmpty').hidden=true}
+$('#hideEmpty').onclick=()=>{hideEmpty=!hideEmpty;try{localStorage.setItem('glolog.hideempty',hideEmpty?'1':'0')}catch(e){}renderBlocks();toast(hideEmpty?'빈 줄 칸을 숨겼어요 · 지면의 빈 줄 여백은 그대로예요':'빈 줄 칸을 다시 보여요')};
+function bkTargets(){const ids=new Set();let sc=0;S.blocks.forEach(b=>{if(b.t==='b'){sc++;return}if(!b.x.trim())return;
+  if(BK.t==='all'||(BK.t==='scene'&&sc===pvPage)||(BK.t==='sel'&&BK.sel.has(b.id)))ids.add(b.id)});return ids}
+function updSel(){[...BK.sel].forEach(id=>{if(!S.blocks.some(b=>b.id===id))BK.sel.delete(id)});$('#selN').textContent=BK.sel.size;
+  $('#bkScene').textContent=`이 장면 (${pvPage+1})`;$('#bulk').querySelectorAll('[data-t]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.t===BK.t));
+  const n=bkTargets().size;$('#bkApply').textContent=n?`${n}개 문단에 적용`:'적용할 문단이 없어요';$('#bkApply').disabled=!n;
+  $('#bulk').querySelector('.bk-pick').hidden=edMode!=='blocks';
+  $('#bkNote').textContent=edMode!=='blocks'&&BK.t==='sel'?'문단을 고르려면 ‘문단별 연출’로 바꿔 주세요.':BK.t==='sel'&&!BK.sel.size?'아래 문단 칸 왼쪽의 네모를 눌러 고르세요. Shift를 누르고 누르면 사이 문단을 한 번에 골라요.':''}
+function bkFx(){const g=$('#bkG').value;$('#bkFx').innerHTML='<option value="">연출: 그대로</option><option value="none">연출 없음</option>'+Object.entries(FX).filter(([k,v])=>v.g===g).map(([k,v])=>`<option value="${k}">${v.n} · ${v.m}</option>`).join('')}
+$('#bkG').innerHTML=Object.entries(GENRES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');bkFx();$('#bkG').addEventListener('change',bkFx);
+$('#bulkBtn').onclick=()=>{const open=$('#bulk').hidden;$('#bulk').hidden=!open;$('#bulkBtn').setAttribute('aria-expanded',open);$('#blocks').classList.toggle('picking',open);updSel();if(open)$('#bkG').focus()};
+$('#bkClose').onclick=()=>{$('#bulk').hidden=true;$('#bulkBtn').setAttribute('aria-expanded',false);$('#blocks').classList.remove('picking');$('#bulkBtn').focus()};
+$('#bulk').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(b){BK.t=b.dataset.t;updSel()}});
+$('#bkAll').onclick=()=>{S.blocks.forEach(b=>{if(b.t==='p'&&b.x.trim())BK.sel.add(b.id)});BK.t='sel';renderBlocks()};
+$('#bkNone').onclick=()=>{BK.sel.clear();renderBlocks()};
+$('#bkApply').onclick=()=>{const ids=bkTargets();if(!ids.size)return;const fx=$('#bkFx').value,tr=$('#bkTr').value,sp=$('#bkSp').value;
+  if(!fx&&!tr&&!sp){toast('바꿀 연출·시작·빠르기 중 하나를 골라 주세요');return}
+  snap();S.blocks.forEach(b=>{if(!ids.has(b.id))return;if(fx){b.fx=fx;if(fx!=='none')uiG.set(b.id,FX[fx].g)}if(tr)b.tr=tr;if(sp)b.sp=sp});
+  renderBlocks();changed(true);toast(`${ids.size}개 문단에 적용했어요 · Ctrl+Z로 되돌리기`)};
 const BL=$('#blocks');
-BL.addEventListener('input',e=>{if(e.target.tagName!=='TEXTAREA')return;const i=idxOf(e.target);S.blocks[i].x=e.target.value;grow(e.target);refreshTag(i);changed()});
+BL.addEventListener('input',e=>{if(e.target.tagName!=='TEXTAREA')return;const i=idxOf(e.target);S.blocks[i].x=e.target.value;e.target.closest('.blk').classList.toggle('is-empty',!e.target.value.trim());updEmpty();grow(e.target);refreshTag(i);changed()});
 BL.addEventListener('change',e=>{
   if(e.target.dataset.g){const i=idxOf(e.target),b=S.blocks[i],g=e.target.value;uiG.set(b.id,g);lastG=g;e.target.closest('.blk').dataset.g=g;const fs=document.getElementById('fx'+b.id);
     if(b.fx!=='none'&&FX[b.fx].g!==g){b.fx='none';refreshTag(i);changed(true)}fs.innerHTML=fxOpts(g,b.fx);fs.focus();return}
   const k=e.target.dataset.k;if(!k)return;if(k==='fx'&&e.target.value!=='none'){lastG=FX[e.target.value].g}const i=idxOf(e.target);S.blocks[i][k]=e.target.value;refreshTag(i);changed(true);if(k==='pp')renderColors()});
 BL.addEventListener('focusin',e=>{const i=idxOf(e.target);if(i<0)return;const p=pageOf(i);if(p!==pvPage){pvPage=p;renderPreview()}});
 BL.addEventListener('click',e=>{
+  const chk=e.target.closest('.blk-chk');if(chk){const i=idxOf(chk),b=S.blocks[i];
+    if(e.shiftKey&&BK.last!=null){const ps=S.blocks.filter(x=>x.t==='p'),a=ps.findIndex(x=>x.id===BK.last),z=ps.findIndex(x=>x.id===b.id);if(a>=0&&z>=0){ps.slice(Math.min(a,z),Math.max(a,z)+1).forEach(x=>{if(x.x.trim()){chk.checked?BK.sel.add(x.id):BK.sel.delete(x.id)}})}}
+    else chk.checked?BK.sel.add(b.id):BK.sel.delete(b.id);
+    BK.last=b.id;BK.t='sel';document.querySelectorAll('#blocks .blk').forEach(d=>{const x=S.blocks[+d.dataset.i];if(!x)return;const on=BK.sel.has(x.id);d.classList.toggle('sel',on);const c=d.querySelector('.blk-chk');if(c)c.checked=on});updSel();return}
   const btn=e.target.closest('button');if(!btn)return;const i=idxOf(btn);if(i<0)return;const b=S.blocks[i];
   if(btn.dataset.tr){b.tr=btn.dataset.tr;btn.parentNode.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===btn));refreshTag(i);changed(true);return}
   const a=btn.dataset.a,ta=document.getElementById('t'+b.id);
@@ -1600,7 +1652,7 @@ function setMode(m){edMode=m;try{localStorage.setItem('glolog.edmode',m)}catch(e
   $('#mdWhole').setAttribute('aria-pressed',m==='whole');$('#mdBlocks').setAttribute('aria-pressed',m==='blocks');
   $('#wholeWrap').hidden=m!=='whole';$('#blocks').hidden=m!=='blocks';document.querySelectorAll('.blk-only').forEach(b=>b.hidden=m!=='blocks');
   if(m==='whole'){clearTimeout(whT);fillWhole()}else{if(WH.value&&whT){clearTimeout(whT);S.blocks=parseWhole(WH.value);changed(true)}whT=0;renderBlocks()}}
-$('#mdWhole').onclick=()=>setMode('whole');$('#mdBlocks').onclick=()=>setMode('blocks');
+$('#mdWhole').onclick=()=>{setMode('whole');updEmpty();updSel()};$('#mdBlocks').onclick=()=>{setMode('blocks');updEmpty();updSel()};
 
 /* 지면 설정 */
 const SET={sCw:'cw',sTitle:'title',sSub:'sub',sTf:'tf',sBf:'bf',sPp:'pp',sSc:'sc',sTn:'tn',sFs:'fs',sLh:'lh',sPs:'ps'};
@@ -1631,7 +1683,7 @@ $('#fxCards').addEventListener('click',e=>{const b=e.target.closest('[data-demo]
 
 /* ---------- 미리보기 ---------- */
 let pvTimers=[];
-function renderPreview(){checkSoon();if(S.ib==='scene'&&!$('#iScenes').contains(document.activeElement))renderIScenes();
+function renderPreview(){checkSoon();if(!$('#bulk').hidden)updSel();if(S.ib==='scene'&&!$('#iScenes').contains(document.activeElement))renderIScenes();
   const ae=document.activeElement;if(ae&&ae.closest&&ae.closest('#pvStage [data-ed]'))return;
   pvTimers.forEach(clearTimeout);pvTimers=[];
   const ps=pages();pvPage=Math.max(0,Math.min(pvPage,ps.length-1));
@@ -1683,8 +1735,8 @@ $('#mnEdit').onclick=()=>setTab('edit');$('#mnView').onclick=()=>setTab('view');
 const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const TOUCH=matchMedia('(pointer: coarse)').matches;
 const isFlow=()=>innerWidth<=760;
-let RS={size:100,fx:REDUCE?'calm':'full',pace:'1',bg:'auto',font:'auto',lh:'auto',al:'left',view:'page',hand:'r'};
-try{Object.assign(RS,JSON.parse(localStorage.getItem(KEYR)||'{}'))}catch(e){}
+let RS={size:100,fx:REDUCE?'calm':'full',pace:'1',bg:'auto',font:'auto',lh:'auto',al:'justify',view:'page',hand:'r',v:2};
+try{const o=JSON.parse(localStorage.getItem(KEYR)||'{}');if(o.v!==2){delete o.al;o.v=2}Object.assign(RS,o)}catch(e){}
 if(!['nanum','sans','auto'].includes(RS.font))RS.font='auto';
 const saveRS=()=>{try{localStorage.setItem(KEYR,JSON.stringify(RS))}catch(e){}};
 const R={pi:0,items:[],ii:0,sp:0,np:1,stride:0,chain:[],timers:[],playing:false,page:null,lock:false,auto:false,autoT:0,opener:null,wake:null,flow:false,scroll:false,io:null,rec:null,w:0};
@@ -1716,7 +1768,7 @@ function applyOverrides(page,info){
   if(page.dataset.paper==='custom'){paintCustom(page,S.pc,RD);paintHl(page)}else{clearCustom(RD);['--pg','--pg-ink','--pg-mute','--blend','--glow','--glow-ink','--hl','--lampmark','--vig','--rose','--blood','--cold','--gold','--ancient','--clue'].forEach(k=>page.style.removeProperty(k));paintHl(page)}
   if(RS.font!=='auto'){const f=BF[RS.font];ensureFont(f.f);page.style.setProperty('--bf',f.css);page.style.setProperty('--fsc',f.s)}else{page.style.setProperty('--bf',bfOf().css);page.style.setProperty('--fsc',bfOf().s)}
   if(RS.lh!=='auto'){page.style.setProperty('--lh',RS.lh);page.style.setProperty('--rlh',RS.lh)}else{page.style.setProperty('--lh',S.lh);page.style.setProperty('--rlh',Math.min(1.85,(+S.lh)*.9).toFixed(2))}
-  page.style.setProperty('--rta',RS.al==='justify'?'justify':'left');page.style.setProperty('--rz',RS.size/100);
+  page.style.setProperty('--rta',RS.al==='justify'?'justify':'left');page.classList.toggle('wb-keep',RS.al!=='justify');page.style.setProperty('--rz',RS.size/100);
   RD.dataset.paper=page.dataset.paper;
 }
 function clearAll(){R.timers.forEach(clearTimeout);R.timers=[]}
@@ -1883,7 +1935,7 @@ $('#rsSize').addEventListener('input',e=>{RS.size=+e.target.value;applyRS();save
 function rsChips(sel,key,after){$(sel).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;RS[key]=b.dataset.v;applyRS();saveRS();after&&after()})}
 const rebuild=()=>{const ratio=R.np>1?R.sp/(R.np-1):0;rShow(R.pi,{revealed:true,ratio})};
 rsChips('#rsFx','fx',()=>rShow(R.pi,{revealed:RS.fx==='off'}));rsChips('#rsPace','pace');rsChips('#rsBg','bg');
-rsChips('#rsFont','font',()=>setTimeout(relayout,60));rsChips('#rsLh','lh',relayout);rsChips('#rsAl','al',relayout);rsChips('#rsView','view',rebuild);rsChips('#rsHand','hand');
+rsChips('#rsFont','font',()=>setTimeout(relayout,60));rsChips('#rsLh','lh',relayout);rsChips('#rsAl','al',rebuild);rsChips('#rsView','view',rebuild);rsChips('#rsHand','hand');
 function relayout(){if(RD.hidden||!R.page||!R.flow||R.scroll)return;requestAnimationFrame(()=>{const L=layoutFlow(R.page);R.np=L.np;R.stride=L.stride;if(R.ii<R.items.length&&R.items[R.ii].pg<R.sp)revealThrough(R.sp);showPage(R.sp,false)})}
 let rzT;addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(RD.hidden||!R.page)return;
   if(isFlow()!==R.flow||Math.abs(innerWidth-R.w)>4)rebuild();else relayout()},200)});
