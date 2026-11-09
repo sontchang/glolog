@@ -1248,9 +1248,13 @@ function playSeg(seg,fx,sp,ctx){
   seg.classList.add('fx-'+fxCls(fx));void seg.offsetWidth;seg.classList.add('play');seg.dataset.started='1';
   if(fx==='spot'&&ctx.page){ctx.page.classList.add('spot');seg.closest('.para').classList.add('lit')}
   if(G&&!calm)genreExtras(seg,fx,G,k,ctx);
-  if(G&&G.js==='redact'&&!calm)d+=redactRun(seg,ctx,k,d);
-  if(G&&G.js==='censor'){seg.querySelectorAll('.rd').forEach(rd=>{rd.classList.add('rd-pre');rd.classList.remove('open')});
-    if(calm){const hold=1400*k;ctx.timers.push(setTimeout(()=>seg.querySelectorAll('.rd').forEach(closeRd),d+hold));d+=hold}else d+=censorRun(seg,ctx,k,d)}
+  if(G&&(G.js==='redact'||G.js==='censor')){
+    if(G.js==='censor')seg.querySelectorAll('.rd').forEach(rd=>{rd.classList.add('rd-pre');rd.classList.remove('open')});
+    const root=ctx.solo||ctx.page,grp=rdGroup(seg,root);
+    if(grp[grp.length-1]===seg){
+      if(G.js==='censor'){if(calm){const hold=1400*k;ctx.timers.push(setTimeout(()=>grp.forEach(sg=>sg.querySelectorAll('.rd').forEach(closeRd)),d+hold));d+=hold}else d+=censorRun(grp,ctx,k,d)}
+      else if(!calm)d+=redactRun(grp,ctx,k,d)}
+    seg.dataset.rdroot=ctx.solo?'solo':'page'}
   ctx.timers.push(setTimeout(()=>{seg.classList.add('done');restChars(seg,fx)},d+40));
   return d;
 }
@@ -1272,7 +1276,9 @@ function genreExtras(seg,fx,G,k,ctx){
   if(G.js==='glitch')glitchSwap(seg,ctx,750*k);
 }
 /* 끝난 뒤에도 글자별로 남는 모습 */
-function restChars(seg,fx){const G=SPEC[fx];if(G&&G.js==='redact')seg.querySelectorAll('.rd').forEach(openRd);if(G&&G.js==='censor')seg.querySelectorAll('.rd').forEach(closeRd);if(!G||!G.restc)return;splitChars(seg);
+function restChars(seg,fx,all){const G=SPEC[fx];
+  if(G&&(G.js==='redact'||G.js==='censor')){const root=seg.dataset.rdroot==='solo'?seg.closest('.para'):null;const grp=all?[seg]:rdGroup(seg,root);
+    if(all||grp[grp.length-1]===seg)grp.forEach(sg=>sg.querySelectorAll('.rd').forEach(G.js==='redact'?openRd:closeRd))}if(!G||!G.restc)return;splitChars(seg);
   [...seg.querySelectorAll('.c')].forEach((c,i)=>{const rr=rnd(i*3+1)*2-1,ry=rnd(i*11+7)*2-1;
     if(G.restc==='droop')c.style.transform=`translateY(${(.16+ry*.1).toFixed(3)}em) rotate(${(rr*11).toFixed(2)}deg)`;
     else if(G.restc==='ancient')c.style.transform=`translateY(${(ry*.05).toFixed(3)}em) rotate(${(rr*3).toFixed(2)}deg)`;
@@ -1288,7 +1294,10 @@ function scramble(c,ms,ctx,done){if(c.dataset.o==null)c.dataset.o=c.textContent;
 function closeRd(rd){rd.classList.remove('open','rd-pre','rd-rev','rd-static');rd.style.removeProperty('--np');
   rd.querySelectorAll('.c,.sp').forEach(c=>{if(c.dataset.o!=null)c.textContent=c.dataset.o;c.classList.remove('rv','rvg','scr');c.style.removeProperty('width')})}
 /* 검열: 보이던 문장이 읽는 순서대로 한 글자씩 덮이고, 마지막에 막대 전체가 치직거린 뒤 굳음 */
-function censorRun(seg,ctx,k,start){const rds=[...seg.querySelectorAll('.rd')];if(!rds.length)return 0;
+/* 같은 장면의 검열(해제) 문단은 한 덩어리: 마지막 문단이 나타날 때 장면 전체가 함께 움직임 */
+function rdGroup(seg,root){const kind=seg.dataset.fx;root=root||seg.closest('.page');if(!root||!kind)return [seg];const g=[...root.querySelectorAll(`.seg[data-fx="${kind}"]`)].filter(s=>s.querySelector('.rd'));return g.includes(seg)?g:[seg]}
+function rdIsLast(seg,root){const g=rdGroup(seg,root);return g[g.length-1]===seg}
+function censorRun(segs,ctx,k,start){const rds=segs.flatMap(sg=>[...sg.querySelectorAll('.rd')]);if(!rds.length)return 0;
   const cs=rds.flatMap(rd=>[...rd.querySelectorAll('.c,.sp')].map(c=>[c,rd]));
   const t1=start+1100*k,PER=Math.min(55*k,2400*k/Math.max(1,cs.length)),t2=t1+cs.length*PER+200,end=t2+800*k;
   ctx.timers.push(setTimeout(()=>rds.forEach(rd=>{if(!rd.isConnected)return;const f=rd.getClientRects()[0],c=rd.querySelector('.c');if(f&&c){const cr=c.getBoundingClientRect();rd.style.setProperty('--bt',(f.top-cr.top).toFixed(1)+'px');rd.style.setProperty('--bh',f.height.toFixed(1)+'px')}
@@ -1299,7 +1308,7 @@ function censorRun(seg,ctx,k,start){const rds=[...seg.querySelectorAll('.rd')];i
     const tick=()=>{let on=false;rds.forEach(rd=>{if(rd.isConnected&&rd.classList.contains('rd-static')){on=true;rd.style.setProperty('--np',`${(Math.random()*64)|0}px ${(Math.random()*64)|0}px`)}});if(on)ctx.timers.push(setTimeout(tick,60))};tick()},t2));
   ctx.timers.push(setTimeout(()=>rds.forEach(closeRd),end));
   return end-start}
-function redactRun(seg,ctx,k,start){const rds=[...seg.querySelectorAll('.rd:not(.open)')];if(!rds.length)return 0;
+function redactRun(segs,ctx,k,start){const rds=segs.flatMap(sg=>[...sg.querySelectorAll('.rd:not(.open)')]);if(!rds.length)return 0;
   const cs=rds.flatMap(rd=>[...rd.querySelectorAll('.c,.sp')].map(c=>[c,rd]));
   const t0=start+250*k,t1=t0+1000*k,PER=Math.min(55*k,2600*k/Math.max(1,cs.length)),end=t1+cs.length*PER+260;
   ctx.timers.push(setTimeout(()=>{rds.forEach(rd=>rd.isConnected&&rd.classList.add('rd-static'));
@@ -1717,12 +1726,13 @@ function previewPlay(i){
   const pg=$('#pvStage .page'),el=pg.querySelector(`[data-i="${i}"]`);el.scrollIntoView({block:'nearest',behavior:'smooth'});
   el.querySelectorAll('.beat').forEach(x=>x.remove());
   const segs=[...el.querySelectorAll('.seg')];if(b.fx!=='erase')segs.forEach(s=>s.classList.add('wait'));
-  let t=350;segs.forEach(sg=>{t+=0;const at=t;pvTimers.push(setTimeout(()=>{const d=playSeg(sg,b.fx,b.sp,{page:pg,timers:pvTimers});if(b.fx==='spot')pvTimers.push(setTimeout(()=>{pg.classList.remove('spot');el.classList.remove('lit')},d+1800))},at));t+=durOf(sg,b.fx,b.sp)+550});
+  let t=350;segs.forEach(sg=>{t+=0;const at=t;pvTimers.push(setTimeout(()=>{const d=playSeg(sg,b.fx,b.sp,{page:pg,timers:pvTimers,solo:el});if(b.fx==='spot')pvTimers.push(setTimeout(()=>{pg.classList.remove('spot');el.classList.remove('lit')},d+1800))},at));t+=durOf(sg,b.fx,b.sp,el)+550});
 }
-function durOf(seg,fx,sp){if(fx==='none')return 0;const k=SPEED[sp]||1;if(fxMode()==='calm')return 480+(fx==='hor.censor'&&seg.querySelector('.rd')?1400*k:0);return planFx(seg,fx,k)+fxExtra(seg,fx,k)}
+function durOf(seg,fx,sp,root){if(fx==='none')return 0;const k=SPEED[sp]||1;if(fxMode()==='calm')return 480+(fx==='hor.censor'&&seg.querySelector('.rd')&&rdIsLast(seg,root)?1400*k:0);return planFx(seg,fx,k)+fxExtra(seg,fx,k,root)}
 /* 검열 연출이 글자 등장 뒤에 더 쓰는 시간 (redactRun·censorRun과 같은 계산) */
-function fxExtra(seg,fx,k){const G=SPEC[fx];if(!G||(G.js!=='redact'&&G.js!=='censor'))return 0;
-  const rds=[...seg.querySelectorAll(G.js==='redact'?'.rd:not(.open)':'.rd')];if(!rds.length)return 0;splitChars(seg);
+function fxExtra(seg,fx,k,root){const G=SPEC[fx];if(!G||(G.js!=='redact'&&G.js!=='censor'))return 0;
+  const grp=rdGroup(seg,root);if(grp[grp.length-1]!==seg)return 0;grp.forEach(splitChars);
+  const rds=grp.flatMap(sg=>[...sg.querySelectorAll(G.js==='redact'?'.rd:not(.open)':'.rd')]);if(!rds.length)return 0;
   const n=rds.reduce((a,rd)=>a+rd.querySelectorAll('.c,.sp').length,0);
   if(G.js==='redact'){const PER=Math.min(55*k,2600*k/Math.max(1,n));return 1250*k+n*PER+260}
   const PER=Math.min(55*k,2400*k/Math.max(1,n));return 1900*k+n*PER+200}
@@ -2131,7 +2141,7 @@ $('#mImg').onclick=async()=>{
   const host=document.createElement('div');host.style.cssText='position:fixed;left:-12000px;top:0;width:640px;pointer-events:none';document.body.append(host);
   const ps=pages(),outs=[];let over=0;
   try{for(let i=0;i<ps.length;i++){
-    const pg=buildPage(i,ps[i]);pg.classList.add('still');pg.style.boxShadow='none';pg.querySelectorAll('.seg[data-fx="hor-redact"] .rd').forEach(openRd);host.replaceChildren(pg);pg.querySelectorAll('.seg[data-fx]').forEach(sg=>{try{restChars(sg,sg.dataset.fx.replace('-','.'))}catch(e){}});await sleep(80);fixColors(pg);
+    const pg=buildPage(i,ps[i]);pg.classList.add('still');pg.style.boxShadow='none';pg.querySelectorAll('.seg[data-fx="hor-redact"] .rd').forEach(openRd);host.replaceChildren(pg);pg.querySelectorAll('.seg[data-fx]').forEach(sg=>{try{restChars(sg,sg.dataset.fx.replace('-','.'),true)}catch(e){}});await sleep(80);fixColors(pg);
     if(overflowPara(pg))over++;
     const cv=await h2c(pg,{scale:1080/640,backgroundColor:null,logging:false,useCORS:true,ignoreElements:el=>el.classList&&el.classList.contains('amb')});
     const blob=await new Promise(r=>cv.toBlob(r,'image/png'));const url=URL.createObjectURL(blob);outUrls.push(url);outs.push({blob,url,name:`${fileBase()}-${i+1}.png`});
